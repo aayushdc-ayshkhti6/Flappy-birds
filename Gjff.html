@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Flappy Bird</title>
+<style>
+body{margin:0;background:#70c5ce;text-align:center;font-family:Arial}
+canvas{background:#70c5ce;display:block;margin:auto}
+</style>
+</head>
+<body>
+<h2>Flappy Bird</h2>
+<canvas id="game" width="320" height="480"></canvas>
+<script>
+const c=document.getElementById("game"),ctx=c.getContext("2d");
+let bird={x:60,y:200,v:0},pipes=[],score=0,over=false;
+
+function flap(){
+if(over){bird.y=200;bird.v=0;pipes=[];score=0;over=false;}
+else bird.v=-6;
+}
+document.addEventListener("keydown",flap);
+c.addEventListener("click",flap);
+
+function draw(){
+ctx.clearRect(0,0,320,480);
+bird.v+=0.3;bird.y+=bird.v;
+
+if(Math.random()<0.025)pipes.push({x:320,h:Math.random()*200+70,scored:false});
+
+pipes.forEach(p=>{
+p.x-=2;
+ctx.fillStyle="green";
+ctx.fillRect(p.x,0,45,p.h);
+ctx.fillRect(p.x,p.h+130,45,350);
+if(p.x<105&&p.x+45>45&&(bird.y<p.h||bird.y+20>p.h+130))over=true;
+if(p.x+45<60&&!p.scored){score++;p.scored=true;}
+});
+
+ctx.fillStyle="yellow";
+ctx.fillRect(bird.x,bird.y,20,20);
+
+if(bird.y<0||bird.y>460)over=true;
+ctx.fillStyle="black";
+ctx.font="25px Arial";
+ctx.fillText("Score: "+score,10,30);
+
+if(over){
+ctx.font="30px Arial";
+ctx.fillText("Game Over!",75,230);
+ctx.font="16px Arial";
+ctx.fillText("Click to restart",105,260);
+}
+else requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>
